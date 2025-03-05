@@ -209,7 +209,30 @@ int q_ascend(struct list_head *head)
 int q_descend(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
-    return 0;
+    if (!head || list_empty(head))
+        return 0;
+
+    struct list_head *tmp;
+    struct list_head *cur = head->prev;
+
+    char *max = strdup(list_entry(cur, element_t, list)->value);
+    strcat(max, "\0");
+
+    while (cur != head) {
+        tmp = cur;
+        cur = cur->prev;
+
+        if (strcmp(list_entry(tmp, element_t, list)->value, max) < 0) {
+            list_del(tmp);
+            q_release_element(list_entry(tmp, element_t, list));
+        } else {
+            free(max);
+            max = strdup(list_entry(tmp, element_t, list)->value);
+        }
+    }
+    free(max);
+
+    return q_size(head);
 }
 
 /* Merge all the queues into one sorted queue, which is in ascending/descending
