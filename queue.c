@@ -4,12 +4,6 @@
 
 #include "queue.h"
 
-/* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
- * but some of them cannot occur. You can suppress them by adding the
- * following line.
- *   cppcheck-suppress nullPointer
- */
-
 /* Create an empty queue */
 struct list_head *q_new()
 {
@@ -29,106 +23,31 @@ void q_free(struct list_head *head) {}
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
-    if (!head)
-        return false;
-
-    char *str = strdup(s);
-
-    element_t *node = malloc(sizeof(element_t));
-
-    // malloc failure handle
-    if (!str) {
-        free(node);
-        return false;
-    }
-
-    if (!node) {
-        free(str);
-        return false;
-    }
-
-    node->value = str;
-    list_add(&node->list, head);
-
     return true;
 }
 
 /* Insert an element at tail of queue */
 bool q_insert_tail(struct list_head *head, char *s)
 {
-    if (!head)
-        return false;
-
-    char *str = strdup(s);
-
-    element_t *node = malloc(sizeof(element_t));
-
-    // malloc failure handle
-    if (!str) {
-        free(node);
-        return false;
-    }
-
-    if (!node) {
-        free(str);
-        return false;
-    }
-
-    node->value = str;
-    list_add_tail(&node->list, head);
-
     return true;
 }
 
 /* Remove an element from head of queue */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (!head || list_empty(head))
-        return NULL;
-
-    element_t *node = list_entry(head->next, element_t, list);
-    char *str = strndup(node->value, bufsize - 1);
-
-    strcat(str, "\0");
-    strncpy(sp, str, bufsize);
-
-    list_del(&node->list);
-
-    return node;
+    return NULL;
 }
 
 /* Remove an element from tail of queue */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (!head || list_empty(head))
-        return NULL;
-
-    element_t *node = list_entry(head->prev, element_t, list);
-    char *str = strndup(node->value, bufsize - 1);
-
-    strcat(str, "\0");
-    strncpy(sp, str, bufsize);
-
-    list_del(&node->list);
-
-    return node;
+    return NULL;
 }
 
 /* Return number of elements in queue */
 int q_size(struct list_head *head)
 {
-    if (!head || list_empty(head))
-        return 0;
-
-    int size = 0;
-    struct list_head *cur = head->next;
-
-    while (cur != head) {
-        size++;
-        cur = cur->next;
-    }
-
-    return size;
+    return -1;
 }
 
 /* Delete the middle node in queue */
