@@ -142,9 +142,21 @@ int q_size(struct list_head *head)
 }
 
 /* Delete the middle node in queue */
+// https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
 bool q_delete_mid(struct list_head *head)
 {
-    // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+    if (!head || list_empty(head))
+        return false;
+
+    int size = q_size(head) / 2;
+    struct list_head *tmp = head->next;
+
+    for (int i = 0; i < size; i++)
+        tmp = tmp->next;
+
+    list_del(tmp);
+    q_release_element(list_entry(tmp, element_t, list));
+
     return true;
 }
 
@@ -206,9 +218,9 @@ int q_ascend(struct list_head *head)
 
 /* Remove every node which has a node with a strictly greater value anywhere to
  * the right side of it */
+// https://leetcode.com/problems/remove-nodes-from-linked-list/
 int q_descend(struct list_head *head)
 {
-    // https://leetcode.com/problems/remove-nodes-from-linked-list/
     if (!head || list_empty(head))
         return 0;
 
