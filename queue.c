@@ -289,7 +289,80 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend) {}
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head) || list_is_singular(head))
+        return;
+
+    int counter = 0;
+    int half = q_size(head) / 2;
+
+    const char *str1 = NULL;
+    const char *str2 = NULL;
+
+    struct list_head *tmp;
+    struct list_head *cur1;
+    struct list_head *cur2;
+
+    struct list_head *cut = head->next;
+
+    while (counter != half) {
+        cut = cut->next;
+        counter++;
+    }
+
+    tmp = head->prev;
+
+    head->prev = cut->prev;
+    cut->prev->next = head;
+    q_sort(head, descend);
+    cur1 = head->next;
+
+    head->prev = tmp;
+    head->next = cut;
+    cut->prev = head;
+    tmp->next = head;
+    q_sort(head, descend);
+    cur2 = head->next;
+
+    INIT_LIST_HEAD(head);
+
+    while (cur1 != head && cur2 != head) {
+        str1 = list_entry(cur1, element_t, list)->value;
+        str2 = list_entry(cur2, element_t, list)->value;
+
+        if (descend) {
+            if (strcmp(str1, str2) >= 0) {
+                tmp = cur1;
+                cur1 = cur1->next;
+            } else {
+                tmp = cur2;
+                cur2 = cur2->next;
+            }
+        } else {
+            if (strcmp(str1, str2) <= 0) {
+                tmp = cur1;
+                cur1 = cur1->next;
+            } else {
+                tmp = cur2;
+                cur2 = cur2->next;
+            }
+        }
+        list_add_tail(tmp, head);
+    }
+
+    while (cur1 != head) {
+        tmp = cur1;
+        cur1 = cur1->next;
+        list_add_tail(tmp, head);
+    }
+
+    while (cur2 != head) {
+        tmp = cur2;
+        cur2 = cur2->next;
+        list_add_tail(tmp, head);
+    }
+}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
