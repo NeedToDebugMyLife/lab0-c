@@ -167,7 +167,7 @@ bool q_delete_dup(struct list_head *head)
     if (!head || list_empty(head))
         return false;
 
-    char *str = "\0";
+    char *str = strdup("");
     struct list_head *cur = head->next;
 
     while (cur->next != head) {
@@ -178,9 +178,7 @@ bool q_delete_dup(struct list_head *head)
         if (strcmp(list_entry(tmp, element_t, list)->value, str) == 0 ||
             strcmp(list_entry(tmp, element_t, list)->value,
                    list_entry(cur, element_t, list)->value) == 0) {
-            if (strcmp(str, "\0") != 0)
-                free(str);
-
+            free(str);
             str = strdup(list_entry(tmp, element_t, list)->value);
 
             list_del(tmp);
