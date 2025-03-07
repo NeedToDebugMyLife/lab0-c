@@ -374,7 +374,6 @@ int q_ascend(struct list_head *head)
     struct list_head *cur = head->prev;
 
     char *min = strdup(list_entry(cur, element_t, list)->value);
-    strcat(min, "\0");
 
     while (cur != head) {
         tmp = cur;
@@ -405,7 +404,6 @@ int q_descend(struct list_head *head)
     struct list_head *cur = head->prev;
 
     char *max = strdup(list_entry(cur, element_t, list)->value);
-    strcat(max, "\0");
 
     while (cur != head) {
         tmp = cur;
