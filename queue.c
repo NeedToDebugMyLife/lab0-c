@@ -293,39 +293,36 @@ void q_sort(struct list_head *head, bool descend)
         return;
 
     int counter = 0;
-    int half = q_size(head) / 2;
+    int mid = q_size(head) / 2 - 1;
+
+    struct list_head *cut = head->next;
+
+    while (counter != mid) {
+        cut = cut->next;
+        counter++;
+    }
+
+    struct list_head head1;
+    struct list_head head2;
+
+    INIT_LIST_HEAD(&head1);
+    INIT_LIST_HEAD(&head2);
+
+    list_splice_tail(head, &head2);
+    list_cut_position(&head1, &head2, cut);
+    INIT_LIST_HEAD(head);
+
+    q_sort(&head1, descend);
+    q_sort(&head2, descend);
 
     const char *str1 = NULL;
     const char *str2 = NULL;
 
     struct list_head *tmp;
-    struct list_head *cur1;
-    struct list_head *cur2;
+    struct list_head *cur1 = (&head1)->next;
+    struct list_head *cur2 = (&head2)->next;
 
-    struct list_head *cut = head->next;
-
-    while (counter != half) {
-        cut = cut->next;
-        counter++;
-    }
-
-    tmp = head->prev;
-
-    head->prev = cut->prev;
-    cut->prev->next = head;
-    q_sort(head, descend);
-    cur1 = head->next;
-
-    head->prev = tmp;
-    head->next = cut;
-    cut->prev = head;
-    tmp->next = head;
-    q_sort(head, descend);
-    cur2 = head->next;
-
-    INIT_LIST_HEAD(head);
-
-    while (cur1 != head && cur2 != head) {
+    while (cur1 != &head1 && cur2 != &head2) {
         str1 = list_entry(cur1, element_t, list)->value;
         str2 = list_entry(cur2, element_t, list)->value;
 
@@ -346,20 +343,15 @@ void q_sort(struct list_head *head, bool descend)
                 cur2 = cur2->next;
             }
         }
+        list_del(tmp);
         list_add_tail(tmp, head);
     }
 
-    while (cur1 != head) {
-        tmp = cur1;
-        cur1 = cur1->next;
-        list_add_tail(tmp, head);
-    }
+    if (cur1 != &head1)
+        list_splice_tail(&head1, head);
 
-    while (cur2 != head) {
-        tmp = cur2;
-        cur2 = cur2->next;
-        list_add_tail(tmp, head);
-    }
+    if (cur2 != &head2)
+        list_splice_tail(&head2, head);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
