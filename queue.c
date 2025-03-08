@@ -44,8 +44,6 @@ bool q_insert_head(struct list_head *head, char *s)
         return false;
 
     char *str = strdup(s);
-    strcat(str, "\0");
-
     element_t *node = malloc(sizeof(element_t));
 
     // malloc failure handle
@@ -72,8 +70,6 @@ bool q_insert_tail(struct list_head *head, char *s)
         return false;
 
     char *str = strdup(s);
-    strcat(str, "\0");
-
     element_t *node = malloc(sizeof(element_t));
 
     // malloc failure handle
