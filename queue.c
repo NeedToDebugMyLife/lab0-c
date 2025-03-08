@@ -416,8 +416,83 @@ int q_descend(struct list_head *head)
 
 /* Merge all the queues into one sorted queue, which is in ascending/descending
  * order */
+// https://leetcode.com/problems/merge-k-sorted-lists/
 int q_merge(struct list_head *head, bool descend)
 {
-    // https://leetcode.com/problems/merge-k-sorted-lists/
-    return 0;
+    if (!head || list_empty(head))
+        return 0;
+
+    if (list_is_singular(head))
+        return q_size(list_entry(head->next, queue_contex_t, chain)->q);
+
+    int total = 0;
+    struct list_head result;
+    struct list_head *cur = head->next;
+
+    INIT_LIST_HEAD(&result);
+
+    while (cur != head) {
+        total += list_entry(cur, queue_contex_t, chain)->size;
+        cur = cur->next;
+    }
+
+    for (int i = 0; i < total; i++) {
+        cur = head->next;
+
+        while (list_empty(list_entry(cur, queue_contex_t, chain)->q) &&
+               cur != head)
+            cur = cur->next;
+
+        queue_contex_t *context_cur = list_entry(cur, queue_contex_t, chain);
+        queue_contex_t *context_max = list_entry(cur, queue_contex_t, chain);
+        queue_contex_t *context_min = list_entry(cur, queue_contex_t, chain);
+
+        const element_t *element_cur;
+        const element_t *element_max =
+            list_entry(context_cur->q->next, element_t, list);
+        const element_t *element_min =
+            list_entry(context_cur->q->next, element_t, list);
+
+        while (cur != head) {
+            context_cur = list_entry(cur, queue_contex_t, chain);
+
+            if (context_cur->size != 0) {
+                element_cur = list_entry(context_cur->q->next, element_t, list);
+
+                if (descend) {
+                    if (strcmp(element_cur->value, element_max->value) > 0) {
+                        element_max = element_cur;
+                        context_max = context_cur;
+                    }
+                } else {
+                    if (strcmp(element_cur->value, element_min->value) < 0) {
+                        element_min = element_cur;
+                        context_min = context_cur;
+                    }
+                }
+            }
+            cur = cur->next;
+        }
+
+        struct list_head *node;
+
+        if (descend) {
+            node = context_max->q->next;
+            context_max->size--;
+        } else {
+            node = context_min->q->next;
+            context_min->size--;
+        }
+
+        list_del(node);
+        list_add_tail(node, &result);
+    }
+
+    list_splice_tail_init(&result,
+                          list_entry(head->next, queue_contex_t, chain)->q);
+
+    int size = q_size(list_entry(head->next, queue_contex_t, chain)->q);
+    list_entry(cur, queue_contex_t, chain)->size = size;
+
+    return size;
 }
