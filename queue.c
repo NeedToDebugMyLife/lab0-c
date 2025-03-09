@@ -343,11 +343,8 @@ void q_sort(struct list_head *head, bool descend)
         list_add_tail(tmp, head);
     }
 
-    if (cur1 != &head1)
-        list_splice_tail(&head1, head);
-
-    if (cur2 != &head2)
-        list_splice_tail(&head2, head);
+    list_splice_tail(&head1, head);
+    list_splice_tail(&head2, head);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
